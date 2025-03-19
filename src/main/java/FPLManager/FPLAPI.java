@@ -20,6 +20,10 @@ public class FPLAPI {
     private String teamName;
     private ArrayList<Integer> teamPlayers;
     private int nextGW;
+    private Map<Integer, Map<String, Object>> playerData;
+    private List<Map<String, Object>> nextGWInfo;
+    private ArrayList<Integer> transferHistory;
+    private Map<String, Integer> chips;
 
     /**
      * Constructs an FPLAPI object with the specified manager ID and next gameweek.
@@ -36,6 +40,10 @@ public class FPLAPI {
         this.nextGW = nextGW;
         setTeamName();
         setTeamPlayers();
+        setPlayerData();
+        setNextGWInfo();
+        setTransferHistory();
+        setChips();
     }
 
     /**
@@ -143,12 +151,10 @@ public class FPLAPI {
     }
 
     /**
-     * Fetches player data for the manager's team.
-     *
-     * @return A map of player IDs to player data.
+     * Sets player data for the manager's team.
      */
-    private Map<Integer, Map<String, Object>> fetchPlayerData() {
-        Map<Integer, Map<String, Object>> playerData = new HashMap<>();
+    private void setPlayerData() {
+        this.playerData = new HashMap<>();
         Map<String, Object> responseMap = getJsonBody("bootstrap-static/", new TypeReference<Map<String, Object>>() {});
 
         if (responseMap != null) {
@@ -159,71 +165,82 @@ public class FPLAPI {
                 for (Map<String, Object> player : elements) {
                     Integer playerId = (Integer) player.get("id");
                     if (this.teamPlayers.contains(playerId)) {
-                        playerData.put(playerId, player);
+                        this.playerData.put(playerId, player);
                     }
                 }
             }
         }
-
-        return playerData;
     }
 
     /**
-     * Fetches information about the upcoming gameweek's fixtures.
-     *
-     * @return A list of fixture data, or null if an error occurs.
+     * Sets information about the upcoming gameweek's fixtures.
      */
-    private List<Map<String, Object>> fetchNextGWInfo() {
+    public void setNextGWInfo() {
         List<Map<String, Object>> responseList = getJsonBody("fixtures/?event=" + this.nextGW, new TypeReference<List<Map<String, Object>>>() {});
 
         if (responseList == null) {
             System.err.println("Could not find upcoming fixtures for: " + this.nextGW);
-            return null;
         }
-        return responseList;
+        this.nextGWInfo = responseList;
+    }
+
+
+    /**
+     * Sets the transfer history for the manager.
+     */
+    public void setTransferHistory() {
+        this.transferHistory = new ArrayList<>();
+        List<Map<String, Object>> transferMap = getJsonBody("entry/" + this.managerID + "/transfers/", new TypeReference<List<Map<String, Object>>>() {});
+        
+        if (transferMap != null) {
+            for (Map<String, Object> transfer : transferMap) {
+                Integer eventID = (Integer) transfer.get("event");
+                this.transferHistory.add(eventID);
+            }
+        }
     }
 
     /**
-     * Returns the manager ID.
-     *
-     * @return The manager ID.
+     * Sets the chips used by the manager.
      */
-    public int getManagerID() {
-        return managerID;
-    }
+    public void setChips() {
+        this.chips = new HashMap<>();
+        Map<String, Object> responseMap = getJsonBody("entry/" + this.managerID + "/history/", new TypeReference<Map<String, Object>>() {});
 
-    /**
-     * Returns the team name.
-     *
-     * @return The team name.
-     */
-    public String getTeamName() {
-        return teamName;
-    }
+        if (responseMap != null) {
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> chipsArray = (List<Map<String, Object>>) responseMap.get("chips");
 
-    /**
-     * Returns the list of team player IDs.
-     *
-     * @return The list of team player IDs.
-     */
-    public ArrayList<Integer> getTeamPlayers() {
-        return teamPlayers;
-    }
+            if (chipsArray != null) {
+                for (Map<String, Object> chip : chipsArray) {
+                    String chipName = (String) chip.get("name");
+                    Integer gw = (Integer) chip.get("event");
 
-    /**
-     * Returns the next gameweek number.
-     *
-     * @return The next gameweek number.
-     */
-    public int getNextGW() {
-        return nextGW;
+                    if (chipName != null && gw != null) {
+                        this.chips.put(chipName, gw);
+                    }
+                }
+            }
+        }
     }
+    // Getters
+    public int getManagerID() { return managerID; }
+    public String getTeamName() { return teamName; }
+    public ArrayList<Integer> getTeamPlayers() { return teamPlayers; }
+    public int getNextGW() { return nextGW; }
+    public Map<Integer, Map<String, Object>> getPlayerData() { return playerData; }
+    public List<Map<String, Object>> getNextGWInfo() { return nextGWInfo; }
+    public ArrayList<Integer> getTransferHistory() { return transferHistory; }
+    public Map<String, Integer> getChips() { return chips; }
 
     /**
      * Main method for testing the FPLAPI class.
-     *
-     * @param args Command-line arguments (not used).
      */
     public static void main(String[] args) {
+        FPLAPI me = new FPLAPI(3907402, 30);
+        System.out.println(me.getNextGWInfo());
+        System.out.println(me.getPlayerData());
+        System.out.println(me.getTransferHistory());
+        System.out.println(me.getChips());
     }
 }
