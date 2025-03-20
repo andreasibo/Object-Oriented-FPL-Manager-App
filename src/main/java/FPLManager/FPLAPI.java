@@ -24,6 +24,7 @@ public class FPLAPI {
     private List<Map<String, Object>> nextGWInfo;
     private ArrayList<Integer> transferHistory;
     private Map<String, Integer> chips;
+    private Map<Integer, List<Map<String, Object>>> remainingFixtures;
 
     /**
      * Constructs an FPLAPI object with the specified manager ID and next gameweek.
@@ -44,6 +45,7 @@ public class FPLAPI {
         setNextGWInfo();
         setTransferHistory();
         setChips();
+        setRemainingFixtures();
     }
 
     /**
@@ -223,6 +225,33 @@ public class FPLAPI {
             }
         }
     }
+
+    /**
+     * Constructs the remaining fixture list for the season.
+     *
+     * @return A map where the key is the Gameweek number, and the values are a list of home and away team,
+     */
+    private void setRemainingFixtures() {
+        List<Map<String, Object>> allFixtures = getJsonBody("fixtures/", new TypeReference<List<Map<String, Object>>>() {});
+        Map<Integer, List<Map<String, Object>>> remainingFixtures = new HashMap<>();
+        if (allFixtures != null) {
+            for (Map<String, Object> fixture : allFixtures) {
+                int gameweek = (Integer) fixture.get("event");
+                if (gameweek >= this.nextGW) {
+                    int homeTeamId = (Integer) fixture.get("team_h");
+                    int awayTeamId = (Integer) fixture.get("team_a");
+
+                    Map<String, Object> fixtureData = new HashMap<>();
+                    fixtureData.put("HomeTeam", homeTeamId);
+                    fixtureData.put("AwayTeam", awayTeamId);
+
+                    remainingFixtures.computeIfAbsent(gameweek, k -> new ArrayList<>()).add(fixtureData);
+                }
+            }
+        }
+        this.remainingFixtures = remainingFixtures;
+    }
+
     // Getters
     public int getManagerID() { return managerID; }
     public String getTeamName() { return teamName; }
@@ -232,6 +261,7 @@ public class FPLAPI {
     public List<Map<String, Object>> getNextGWInfo() { return nextGWInfo; }
     public ArrayList<Integer> getTransferHistory() { return transferHistory; }
     public Map<String, Integer> getChips() { return chips; }
+    public Map<Integer, List<Map<String, Object>>> getRemainingFixtures() {return this.remainingFixtures; }
 
     /**
      * Main method for testing the FPLAPI class.
@@ -242,5 +272,6 @@ public class FPLAPI {
         System.out.println(me.getPlayerData());
         System.out.println(me.getTransferHistory());
         System.out.println(me.getChips());
+        System.out.println(me.getRemainingFixtures());
     }
 }
