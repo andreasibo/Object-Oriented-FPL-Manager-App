@@ -121,15 +121,4 @@ public class Manager implements ID{
         return this.ID;
     }
 
-    /**
-     * The main method to test the Manager class.
-     *
-     */
-    public static void main(String[] args) {
-        Manager me = new Manager(3907402, 30);
-        System.out.println(me.getName());
-        System.out.println(me.getTeamPlayersID());
-        System.out.println(me.getAvailableTransfers());
-        System.out.println(me.getChipsAvailable());
-    } 
 }

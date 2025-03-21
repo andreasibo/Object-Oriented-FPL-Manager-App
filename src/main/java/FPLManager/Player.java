@@ -109,26 +109,4 @@ public class Player implements ID{
         return this.ID;
     }
 
-    /**
-     * The main method to test the Player class.
-     */
-    public static void main(String[] args) {
-        FPLAPI me = new FPLAPI(3907402, 30);
-        Map<Integer, Map<String, Object>> allPlayerData = me.getPlayerData();
-        Map<String, Object> playerData = allPlayerData.get(6);
-        Player Timber = new Player(6, 30, playerData, me.getRemainingFixtures());
-        System.out.println("Player Name: " + Timber.getName());
-        System.out.println("Chance of Playing: " + Timber.getChanceOfPlaying());
-        System.out.println("Cost Change: " + Timber.getCostChange());
-        System.out.println("Points Last Round: " + Timber.getPointsLastRound());
-        System.out.println("Price: " + Timber.getPrice());
-        System.out.println("Average Points: " + Timber.getAvgPoints());
-        System.out.println("Selected By: " + Timber.getSelectedBy());
-        System.out.println("Transfer Balance: " + Timber.getTransferBalance());
-        System.out.println("xG: " + Timber.getxG());
-        System.out.println("xA: " + Timber.getxA());
-        System.out.println("Clean sheets per game: " + Timber.getCleanSheetsPerGame());
-        System.out.println("Team ID: " + Timber.getTeam());
-        System.out.println("Fixtures: " + Timber.getFixtures());
-    }
 }

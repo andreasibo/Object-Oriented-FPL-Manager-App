@@ -54,12 +54,4 @@ public class DeadlineHandler {
     // Getter
     public String getGWDeadLine() { return this.gwDeadline; }
 
-    /**
-     * The main method to test the DeadlineHandler class.
-     */
-    public static void main(String[] args) {
-        FPLAPI me = new FPLAPI(3907402, 30);
-        DeadlineHandler deadline = new DeadlineHandler(me.getNextGWInfo());
-        System.out.println(deadline.getGWDeadLine());
-    }
 }

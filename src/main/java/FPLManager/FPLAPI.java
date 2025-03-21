@@ -263,15 +263,4 @@ public class FPLAPI {
     public Map<String, Integer> getChips() { return chips; }
     public Map<Integer, List<Map<String, Object>>> getRemainingFixtures() {return this.remainingFixtures; }
 
-    /**
-     * Main method for testing the FPLAPI class.
-     */
-    public static void main(String[] args) {
-        FPLAPI me = new FPLAPI(3907402, 30);
-        System.out.println(me.getNextGWInfo());
-        System.out.println(me.getPlayerData());
-        System.out.println(me.getTransferHistory());
-        System.out.println(me.getChips());
-        System.out.println(me.getRemainingFixtures());
-    }
 }
