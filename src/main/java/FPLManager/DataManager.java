@@ -105,7 +105,7 @@ public class DataManager {
         } catch (IOException e) {
             System.err.println("Error: file 'users.txt' could not be opened. Does it exist?");
         }
-        return 0;
+        return -1;
     }
 
     // Getter
