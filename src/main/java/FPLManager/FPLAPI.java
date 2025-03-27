@@ -33,12 +33,9 @@ public class FPLAPI {
      * @param nextGW    The next gameweek number.
      * @throws IllegalArgumentException If the gameweek is out of range (1-38).
      */
-    public FPLAPI(int managerID, int nextGW) {
-        if (nextGW < 1 || nextGW > 38) {
-            throw new IllegalArgumentException("Illegal parameters");
-        }
+    public FPLAPI(int managerID) {
         this.managerID = managerID;
-        this.nextGW = nextGW;
+        setNextGW();
         setTeamName();
         setTeamPlayers();
         setPlayerData();
@@ -110,6 +107,22 @@ public class FPLAPI {
             System.err.println("Error with HTTP request in getJsonBody(): " + finalRequestString + " - " + e.getMessage());
             return null;
         }
+    }
+
+    /**
+     * Sets the next gameweek from the FPL API.
+     */
+    private void setNextGW() {
+        List<Map<String, Object>> events = getJsonBody("events/", new TypeReference<List<Map<String, Object>>>() {});
+        if (events != null) {
+            for (Map<String, Object> event : events) {
+                if ((Boolean) event.get("is_next")) {
+                    this.nextGW = (Integer) event.get("id");
+                    return; // Exit after setting nextGW
+                }
+            }
+        }
+        this.nextGW = -1;
     }
 
     /**

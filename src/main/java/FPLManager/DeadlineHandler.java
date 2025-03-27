@@ -48,7 +48,7 @@ public class DeadlineHandler {
     
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd.MM");
         String formattedDeadline = deadline.format(formatter);
-        this.gwDeadline = "Gameweek Deadline: " + formattedDeadline;
+        this.gwDeadline = formattedDeadline;
     }
 
     // Getter

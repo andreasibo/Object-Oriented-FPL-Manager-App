@@ -10,13 +10,12 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * The DataManager class handles the management of team data and user data for the Fantasy Premier League (FPL) game.
  */
 public class DataManager {
-    private Collection<String> teams;
+    private ArrayList<String> teams;
 
      /**
      * Constructs a new DataManager object and initializes the teams.
@@ -109,6 +108,6 @@ public class DataManager {
     }
 
     // Getter
-    public Collection<String> getTeams() { return this.teams; }
+    public ArrayList<String> getTeams() { return this.teams; }
 
 }

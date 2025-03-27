@@ -18,6 +18,7 @@ public class Manager implements ID{
     private ArrayList<Player> teamPlayers;
     private HashMap<String, Integer> chipsAvailable;
     private int availableTransfers;
+    private String gwDeadline;
 
     /**
      * Constructs a new Manager object with the specified manager ID and next game week.
@@ -25,12 +26,14 @@ public class Manager implements ID{
      * @param managerID the unique identifier of the manager
      * @param nextGW the next game week
      */
-    public Manager(int managerID, int nextGW) {
+    public Manager(int managerID) {
         this.ID = managerID;
-        this.nextGW = nextGW;
-        FPLAPI managerData = new FPLAPI(this.ID, this.nextGW);
+        FPLAPI managerData = new FPLAPI(this.ID);
+        DeadlineHandler deadline = new DeadlineHandler(managerData.getNextGWInfo());
+        this.nextGW = managerData.getNextGW();
         this.teamName = managerData.getTeamName();
         this.teamPlayersID = managerData.getTeamPlayers();
+        this.gwDeadline = deadline.getGWDeadLine();
         setChipsAvailable(managerData.getChips());
         setAvailableTransfers(managerData.getTransferHistory());
         setTeamPlayers(managerData.getPlayerData(),managerData.getRemainingFixtures());
@@ -115,6 +118,7 @@ public class Manager implements ID{
     public int getNextGW() { return this.nextGW; }
     public HashMap<String, Integer> getChipsAvailable() { return this.chipsAvailable; }
     public ArrayList<Player> getTeamPlayers() { return this.teamPlayers; }
+    public String getGWDeadline() { return this.gwDeadline; }
 
     @Override
     public int getID() {

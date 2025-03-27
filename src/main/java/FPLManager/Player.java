@@ -23,8 +23,9 @@ public class Player implements ID{
     private double xG;
     private double xA;
     private double cleanSheets;
-    private int team;
-    private Map<Integer, List<Integer>> fixtures;
+    private int teamID;
+    private String team;
+    private Map<Integer, List<String>> fixtures;
 
     /**
      * Constructs a new Player object with the specified ID, next game week, player data, and fixture data.
@@ -37,8 +38,11 @@ public class Player implements ID{
     public Player(int ID, int nextGW, Map<String, Object> playerData, Map<Integer, List<Map<String, Object>>> fixtureData) {
         this.ID = ID;
         this.nextGW = nextGW;
+        DataManager data = new DataManager();
+        ArrayList<String> teams = data.getTeams();
         setAttributes(playerData);
-        setFixtures(fixtureData);
+        setTeam(teams);
+        setFixtures(fixtureData, teams);
     }   
 
     /**
@@ -47,18 +51,37 @@ public class Player implements ID{
      * @param playerData a map containing the player's data, provided by the FPLAPI class through the Manager class.
      */
     private void setAttributes(Map<String, Object> playerData) {
-        this.name = (String) playerData.get("first_name") + " " + (String) playerData.get("second_name");
-        this.chanceOfPlaying = playerData.get("chance_of_playing_next_round") != null ? (int) playerData.get("chance_of_playing_next_round") : 0;
-        this.costChange = ((Integer) playerData.get("cost_change_event")).doubleValue();
-        this.pointsLastRound = playerData.get("event_points") != null ? (int) playerData.get("event_points") : 0;
-        this.price = ((Integer) playerData.get("now_cost")).doubleValue() / 10.0 ;
-        this.avgPoints = (String) playerData.get("points_per_game");
-        this.selectedBy = (String) playerData.get("selected_by_percent");
-        this.transferBalance = (int) playerData.get("transfers_in_event") - (int) playerData.get("transfers_out_event") ;
-        this.xG = (double) playerData.get("expected_goals_per_90");
-        this.xA = (double) playerData.get("expected_assists_per_90");
-        this.cleanSheets = (double) playerData.get("clean_sheets_per_90");
-        this.team = (int) playerData.get("team");
+        if (playerData != null) {
+            String firstName = (String) playerData.get("first_name");
+            String secondName = (String) playerData.get("second_name");
+    
+            this.name = (firstName != null ? firstName : "") + " " + (secondName != null ? secondName : "");
+    
+            this.chanceOfPlaying = playerData.get("chance_of_playing_next_round") != null ? (int) playerData.get("chance_of_playing_next_round") : 0;
+            this.costChange = playerData.get("cost_change_event") != null ? ((Integer) playerData.get("cost_change_event")).doubleValue() / 10 : 0.0;
+            this.pointsLastRound = playerData.get("event_points") != null ? (int) playerData.get("event_points") : 0;
+            this.price = playerData.get("now_cost") != null ? ((Integer) playerData.get("now_cost")).doubleValue() / 10.0 : 0.0;
+            this.avgPoints = playerData.get("points_per_game") != null ? (String) playerData.get("points_per_game") : "0";
+            this.selectedBy = playerData.get("selected_by_percent") != null ? (String) playerData.get("selected_by_percent") : "0";
+            this.transferBalance = playerData.get("transfers_in_event") != null && playerData.get("transfers_out_event") != null ?
+                    (int) playerData.get("transfers_in_event") - (int) playerData.get("transfers_out_event") : 0;
+            this.xG = playerData.get("expected_goals_per_90") != null ? (double) playerData.get("expected_goals_per_90") : 0.0;
+            this.xA = playerData.get("expected_assists_per_90") != null ? (double) playerData.get("expected_assists_per_90") : 0.0;
+            this.cleanSheets = playerData.get("clean_sheets_per_90") != null ? (double) playerData.get("clean_sheets_per_90") : 0.0;
+            this.teamID = playerData.get("team") != null ? (int) playerData.get("team") : 0;
+        } else {
+            this.name = "";
+            this.chanceOfPlaying = 0;
+            this.costChange = 0.0;
+            this.pointsLastRound = 0;
+            this.price = 0.0;
+            this.avgPoints = "0";
+            this.selectedBy = "0";
+            this.transferBalance = 0;
+            this.xG = 0.0;
+            this.xA = 0.0;
+            this.cleanSheets = 0.0;
+        }
     }
 
     /**
@@ -67,26 +90,44 @@ public class Player implements ID{
      * @param fixtureData a map containing the fixture data.
      * The keys are the GW number and the values is a list where the first index is the opponent, and the second integer represent 1 for home and 0 for away.
      */
-    private void setFixtures(Map<Integer, List<Map<String, Object>>> fixtureData) {
-        Map<Integer, List<Integer>> fixtures = new HashMap<>();
-        for (int gw = this.nextGW; gw < 39; gw++) {
-            List<Integer> fixture = new ArrayList<>();
-            List<Map<String, Object>> fixtureList = fixtureData.get(gw);
-            for (int matches = 0; matches < fixtureList.size(); matches ++) {
-                Map<String, Object> match = fixtureList.get(matches);
-                if (match.get("HomeTeam").equals(this.team)) {
-                    int awayTeam = (int) match.get("AwayTeam");
-                    fixture.add(awayTeam);
-                    fixture.add(1);
-                } else if (match.get("AwayTeam").equals(this.team)) {
-                    int homeTeam = (int) match.get("HomeTeam");
-                    fixture.add(homeTeam);
-                    fixture.add(0);
+    private void setFixtures(Map<Integer, List<Map<String, Object>>> fixtureData, ArrayList<String> teams) {
+        if (fixtureData != null) {
+            Map<Integer, List<String>> fixtures = new HashMap<>();
+            for (int gw = this.nextGW; gw < 39; gw++) {
+                if (fixtureData.containsKey(gw)) { 
+                    List<String> fixture = new ArrayList<>();
+                    List<Map<String, Object>> fixtureList = fixtureData.get(gw);
+                    if (fixtureList != null) {
+                        for (int matches = 0; matches < fixtureList.size(); matches++) {
+                            Map<String, Object> match = fixtureList.get(matches);
+                            if (match != null && match.get("HomeTeam") != null && match.get("AwayTeam") != null) {
+                                if (match.get("HomeTeam").equals(this.teamID)) {
+                                    int awayTeam = (int) match.get("AwayTeam");
+                                    fixture.add(this.team);
+                                    fixture.add(teams.get(awayTeam - 1));
+                                } else if (match.get("AwayTeam").equals(this.teamID)) {
+                                    int homeTeam = (int) match.get("HomeTeam");
+                                    fixture.add(teams.get(homeTeam - 1));
+                                    fixture.add(this.team);
+                                }
+                            }
+                        }
+                    }
+                    fixtures.put(gw, fixture);
                 }
             }
-            fixtures.put(gw, fixture);
+            this.fixtures = fixtures;
+        } else {
+            this.fixtures = new HashMap<>(); 
         }
-        this.fixtures = fixtures;
+    }
+
+    private void setTeam(ArrayList<String> teams) {
+        if (this.teamID == 0) {
+            this.team = "Not found";
+        } else {
+            this.team = teams.get(this.teamID - 1);
+        }
     }
 
     // Getters
@@ -101,12 +142,11 @@ public class Player implements ID{
     public double getxG() {return xG;}
     public double getxA() {return xA;}
     public double getCleanSheetsPerGame() {return cleanSheets;}
-    public int getTeam() {return team;}
-    public Map<Integer, List<Integer>> getFixtures() {return fixtures;}
+    public String getTeam() {return team;}
+    public Map<Integer, List<String>> getFixtures() {return fixtures;}
 
     @Override
     public int getID() {
         return this.ID;
     }
-
 }
