@@ -17,4 +17,5 @@ public class FPLManagerApp extends Application{
     public static void main(String[] args) {
         FPLManagerApp.launch(args);
     }
+
 }

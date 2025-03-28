@@ -16,7 +16,7 @@ public class Manager implements ID{
     private String teamName;
     private ArrayList<Integer> teamPlayersID;
     private ArrayList<Player> teamPlayers;
-    private HashMap<String, Integer> chipsAvailable;
+    private HashMap<String, Object> chipsAvailable;
     private int availableTransfers;
     private String gwDeadline;
 
@@ -48,8 +48,8 @@ public class Manager implements ID{
         int availableTransfers = 1;
         int wildcardGW = -1;
 
-        if (this.chipsAvailable != null && this.chipsAvailable.get("wildcard") != -1) {
-            wildcardGW = this.chipsAvailable.get("wildcard");
+        if (this.chipsAvailable != null && this.chipsAvailable.get("wildcard") != null &&this.chipsAvailable.get("wildcard").getClass().isInstance(String.class)) {
+            wildcardGW = (Integer) this.chipsAvailable.get("wildcard");
         }
 
         for (int currentGW = 1; currentGW <= this.nextGW; currentGW++) {
@@ -73,25 +73,25 @@ public class Manager implements ID{
      *
      * @param chipsUsed a map containing the chips data
      */
-    private void setChipsAvailable(Map<String, Integer> chipsUsed) {
-        this.chipsAvailable = new HashMap<String, Integer>();
+    private void setChipsAvailable(Map<String, Object> chipsUsed) {
+        this.chipsAvailable = new HashMap<String, Object>();
         List<String> chips = Arrays.asList("wildcard", "3xc", "bboost", "manager", "freehit");
         for (String chip : chips) {
             if (chipsUsed != null && chipsUsed.containsKey(chip)) {
-                int usedGW = chipsUsed.get(chip);
-                if (chip.equals("wildcard")) {
-                    if (this.nextGW < 18 && usedGW < 18) {
-                        this.chipsAvailable.put(chip, usedGW);
-                    } else if (this.nextGW > 18 && usedGW > 18) {
-                        this.chipsAvailable.put(chip, usedGW);
+                    int usedGW = (Integer) chipsUsed.get(chip);
+                    if (chip.equals("wildcard")) {
+                        if (this.nextGW < 18 && usedGW < 18) {
+                            this.chipsAvailable.put(chip, usedGW);
+                        } else if (this.nextGW > 18 && usedGW > 18) {
+                            this.chipsAvailable.put(chip, usedGW);
+                        } else {
+                            this.chipsAvailable.put(chip, "Available");
+                        }  
                     } else {
-                        this.chipsAvailable.put(chip, -1);
-                    }  
-                } else {
-                    this.chipsAvailable.put(chip, usedGW);
-                }
+                        this.chipsAvailable.put(chip, usedGW);
+                    }
             } else {
-                this.chipsAvailable.put(chip, -1);
+                this.chipsAvailable.put(chip, "Available");
             }
         }
     }
@@ -116,7 +116,7 @@ public class Manager implements ID{
     public ArrayList<Integer> getTeamPlayersID() { return this.teamPlayersID; }
     public int getAvailableTransfers() { return this.availableTransfers; }
     public int getNextGW() { return this.nextGW; }
-    public HashMap<String, Integer> getChipsAvailable() { return this.chipsAvailable; }
+    public HashMap<String, Object> getChipsAvailable() { return this.chipsAvailable; }
     public ArrayList<Player> getTeamPlayers() { return this.teamPlayers; }
     public String getGWDeadline() { return this.gwDeadline; }
 
@@ -124,5 +124,4 @@ public class Manager implements ID{
     public int getID() {
         return this.ID;
     }
-
 }

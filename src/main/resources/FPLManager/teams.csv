@@ -1,21 +1,21 @@
-﻿Team ID;Team Name
-1;Arsenal
-2;Aston Villa
-3;Bournemouth
-4;Brentford
-5;Brighton
-6;Chelsea
-7;Crystal Palace
-8;Everton
-9;Fulham
-10;Ipswich
-11;Leicester
-12;Liverpool
-13;Man City
-14;Man Utd
-15;Newcastle
-16;Nottingham Forest
-17;Southampton
-18;Tottenham
-19;West Ham
-20;Wolves
+﻿Team ID;Team Name;Team Short
+1;Arsenal;ARS
+2;Aston Villa;AVL
+3;Bournemouth;BOU
+4;Brentford;BRE
+5;Brighton;BHA
+6;Chelsea;CHE
+7;Crystal Palace;CRY
+8;Everton;EVE
+9;Fulham;FUL
+10;Ipswich;IPS
+11;Leicester;LEI
+12;Liverpool;LIV
+13;Man City;MCI
+14;Man Utd;MUN
+15;Newcastle;NEW
+16;Nottingham Forest;NFO
+17;Southampton;SOU
+18;Tottenham;TOT
+19;West Ham;WHU
+20;Wolves;WOL
