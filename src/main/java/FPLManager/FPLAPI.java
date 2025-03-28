@@ -23,7 +23,7 @@ public class FPLAPI {
     private Map<Integer, Map<String, Object>> playerData;
     private List<Map<String, Object>> nextGWInfo;
     private ArrayList<Integer> transferHistory;
-    private Map<String, Integer> chips;
+    private Map<String, Object> chips;
     private Map<Integer, List<Map<String, Object>>> remainingFixtures;
 
     /**
@@ -273,7 +273,12 @@ public class FPLAPI {
     public Map<Integer, Map<String, Object>> getPlayerData() { return playerData; }
     public List<Map<String, Object>> getNextGWInfo() { return nextGWInfo; }
     public ArrayList<Integer> getTransferHistory() { return transferHistory; }
-    public Map<String, Integer> getChips() { return chips; }
+    public Map<String, Object> getChips() { return chips; }
     public Map<Integer, List<Map<String, Object>>> getRemainingFixtures() {return this.remainingFixtures; }
+
+    public static void main(String[] args) {
+        FPLAPI me = new FPLAPI(3907402);
+        System.out.println(me.getChips());
+    }
 
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * The Player class represents a player in the Fantasy Premier League (FPL) game.
@@ -39,10 +40,11 @@ public class Player implements ID{
         this.ID = ID;
         this.nextGW = nextGW;
         DataManager data = new DataManager();
-        ArrayList<String> teams = data.getTeams();
+        ArrayList<ArrayList<String>> teams = data.getTeams();
         setAttributes(playerData);
         setTeam(teams);
         setFixtures(fixtureData, teams);
+        sortFixtures();
     }   
 
     /**
@@ -90,7 +92,7 @@ public class Player implements ID{
      * @param fixtureData a map containing the fixture data.
      * The keys are the GW number and the values is a list where the first index is the opponent, and the second integer represent 1 for home and 0 for away.
      */
-    private void setFixtures(Map<Integer, List<Map<String, Object>>> fixtureData, ArrayList<String> teams) {
+    private void setFixtures(Map<Integer, List<Map<String, Object>>> fixtureData, ArrayList<ArrayList<String>> teams) {
         if (fixtureData != null) {
             Map<Integer, List<String>> fixtures = new HashMap<>();
             for (int gw = this.nextGW; gw < 39; gw++) {
@@ -103,12 +105,12 @@ public class Player implements ID{
                             if (match != null && match.get("HomeTeam") != null && match.get("AwayTeam") != null) {
                                 if (match.get("HomeTeam").equals(this.teamID)) {
                                     int awayTeam = (int) match.get("AwayTeam");
-                                    fixture.add(this.team);
-                                    fixture.add(teams.get(awayTeam - 1));
+                                    String fixtureOutput = teams.get(awayTeam - 1).get(1) + "(H)";
+                                    fixture.add(fixtureOutput);
                                 } else if (match.get("AwayTeam").equals(this.teamID)) {
                                     int homeTeam = (int) match.get("HomeTeam");
-                                    fixture.add(teams.get(homeTeam - 1));
-                                    fixture.add(this.team);
+                                    String fixtureOutput = teams.get(homeTeam - 1).get(1) + "(A)";
+                                    fixture.add(fixtureOutput);
                                 }
                             }
                         }
@@ -122,17 +124,30 @@ public class Player implements ID{
         }
     }
 
-    private void setTeam(ArrayList<String> teams) {
+    private void sortFixtures() {
+        Map<Integer, List<String>> sortedFixtures = new TreeMap<>();
+        sortedFixtures.putAll(this.fixtures);
+        this.fixtures = sortedFixtures;
+    }
+
+    private void setTeam(ArrayList<ArrayList<String>> teams) {
         if (this.teamID == 0) {
             this.team = "Not found";
         } else {
-            this.team = teams.get(this.teamID - 1);
+            this.team = teams.get(this.teamID - 1).get(0);
         }
+    }
+
+    public String getFixtureForGameweek(int gameweek) {
+        if (fixtures != null && fixtures.containsKey(gameweek)) {
+            return String.join(", ", fixtures.get(gameweek));
+        }
+        return "";
     }
 
     // Getters
     public String getName() {return name;}
-    public double getChanceOfPlaying() {return chanceOfPlaying;}
+    public int getChanceOfPlaying() {return chanceOfPlaying;}
     public double getCostChange() {return costChange;}
     public int getPointsLastRound() {return pointsLastRound;}
     public double getPrice() {return price;}
@@ -149,4 +164,5 @@ public class Player implements ID{
     public int getID() {
         return this.ID;
     }
+
 }

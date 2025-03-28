@@ -7,24 +7,24 @@
 <?import javafx.scene.control.TreeTableView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="700.0" prefWidth="1328.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="FPLManager.FPLManagerController">
+<AnchorPane prefHeight="700.0" prefWidth="1060.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="FPLManager.FPLManagerController">
    <children>
-      <Label layoutX="414.0" layoutY="33.0" text="Saved Team ID?" />
-      <TextField fx:id="savedTeamNameField" layoutX="412.0" layoutY="50.0" promptText="Enter Team name" />
-      <Button fx:id="getSavedStatsButton" layoutX="576.0" layoutY="51.0" mnemonicParsing="false" onAction="#handleButtonClickSaved" prefHeight="26.0" prefWidth="66.0" text="Get stats" />
+      <Label layoutX="269.0" layoutY="35.0" text="Saved Team ID?" />
+      <TextField fx:id="savedTeamNameField" layoutX="268.0" layoutY="52.0" promptText="Enter Team name" />
+      <Button fx:id="getSavedStatsButton" layoutX="430.0" layoutY="51.0" mnemonicParsing="false" onAction="#handleButtonClickSaved" prefHeight="26.0" prefWidth="66.0" text="Get stats" />
 
-      <Label layoutX="712.0" layoutY="34.0" text="Dont have saved Team ID?" />
-      <TextField fx:id="teamIdField" layoutX="709.0" layoutY="51.0" promptText="Enter Team ID" />
-      <Button fx:id="getStatsButton" layoutX="874.0" layoutY="51.0" mnemonicParsing="false" onAction="#handleButtonClickID" prefHeight="26.0" prefWidth="66.0" text="Get stats" />
+      <Label layoutX="558.0" layoutY="34.0" text="Dont have saved Team ID?" />
+      <TextField fx:id="teamIdField" layoutX="557.0" layoutY="51.0" promptText="Enter Team ID" />
+      <Button fx:id="getStatsButton" layoutX="718.0" layoutY="51.0" mnemonicParsing="false" onAction="#handleButtonClickID" prefHeight="26.0" prefWidth="66.0" text="Get stats" />
 
-      <Label layoutX="600.0" layoutY="14.0" prefHeight="17.0" prefWidth="146.0" text="FPL Manager Statistics" textAlignment="CENTER" />
+      <Label layoutX="455.0" layoutY="17.0" prefHeight="17.0" prefWidth="146.0" text="FPL Manager Statistics" textAlignment="CENTER" />
 
-      <Label layoutX="613.0" layoutY="610.0" text="Want to save Team ID?" />
-      <TextField fx:id="saveTeamNameField" layoutX="589.0" layoutY="629.0" promptText="Enter Team name" />
-      <TextField fx:id="saveTeamIdField" layoutX="589.0" layoutY="655.0" promptText="Enter Team ID" />
-      <Button fx:id="saveUserButton" layoutX="749.0" layoutY="631.0" mnemonicParsing="false" onAction="#handleSaveUser" prefHeight="49.0" prefWidth="71.0" text="Save user" />
+      <Label layoutX="472.0" layoutY="614.0" text="Want to save Team ID?" />
+      <TextField fx:id="saveTeamNameField" layoutX="429.0" layoutY="631.0" promptText="Enter Team name" />
+      <TextField fx:id="saveTeamIdField" layoutX="429.0" layoutY="658.0" promptText="Enter Team ID" />
+      <Button fx:id="saveUserButton" layoutX="590.0" layoutY="632.0" mnemonicParsing="false" onAction="#handleSaveUser" prefHeight="49.0" prefWidth="71.0" text="Save user" />
 
-      <TreeTableView fx:id="statsTableView" layoutX="22.0" layoutY="156.0" prefHeight="447.0" prefWidth="1280.0">
+      <TreeTableView fx:id="statsTableView" layoutX="22.0" layoutY="156.0" prefHeight="447.0" prefWidth="1015.0">
         <columns>
           <TreeTableColumn fx:id="playerColumn" prefWidth="102.09294319152832" text="Player" />
             <TreeTableColumn fx:id="teamColumn" prefWidth="128.1478271484375" text="Team" />
@@ -37,21 +37,22 @@
             <TreeTableColumn fx:id="transfersColumn" prefWidth="70.5" text="Transfers" />
             <TreeTableColumn prefWidth="63.5" text="xG per 90" fx:id="xgPer90Column" />
             <TreeTableColumn prefWidth="60.0" text="xA per 90" fx:id="xaPer90Column" />
-            <TreeTableColumn fx:id="csPer90Column" prefWidth="64.5" text="CS per 90" />
-          <TreeTableColumn fx:id="nextGwColumn" prefWidth="267.5" text="Next GW" />
+            <TreeTableColumn fx:id="csPer90Column" prefWidth="67.0" text="CS per 90" />
         </columns>
       </TreeTableView>
-      <Label layoutX="415.0" layoutY="90.0" text="Wildcard" />
-      <Label layoutX="506.0" layoutY="90.0" text="Bench Boost" />
-      <Label layoutX="624.0" layoutY="90.0" text="Triple Captain" />
-      <Label layoutX="774.0" layoutY="90.0" text="Free Hit" />
-      <Label layoutX="859.0" layoutY="90.0" text="Asst. Manager" />
-      <Label layoutX="1152.0" layoutY="26.0" text="Deadline:" />
-      <Label fx:id="deadlineLabel" layoutX="1148.0" layoutY="52.0" prefHeight="17.0" prefWidth="71.0" />
-      <Label fx:id="wildcardLabel" layoutX="526.0" layoutY="107.0" />
-      <Label fx:id="benchboostLabel" layoutX="647.0" layoutY="107.0" />
-      <Label fx:id="triplecaptainLabel" layoutX="781.0" layoutY="107.0" />
-      <Label fx:id="freehitLabel" layoutX="883.0" layoutY="107.0" />
-      <Label fx:id="assistantmanagerLabel" layoutX="425.0" layoutY="107.0" />
+      <Label layoutX="273.0" layoutY="90.0" text="Wildcard" />
+      <Label fx:id="wildcardLabel" layoutX="273.0" layoutY="107.0" prefHeight="17.0" />
+      <Label layoutX="373.0" layoutY="90.0" text="Bench Boost" />
+      <Label fx:id="benchboostLabel" layoutX="373.0" layoutY="107.0" prefHeight="17.0" />
+      <Label layoutX="493.0" layoutY="90.0" text="Triple Captain" />
+      <Label fx:id="triplecaptainLabel" layoutX="493.0" layoutY="108.0" prefHeight="17.0" />
+      <Label layoutX="614.0" layoutY="90.0" text="Free Hit" />
+      <Label fx:id="freehitLabel" layoutX="614.0" layoutY="108.0" prefHeight="17.0" />
+      <Label layoutX="700.0" layoutY="89.0" text="Asst. Manager" />
+      <Label fx:id="assistantmanagerLabel" layoutX="700.0" layoutY="107.0" prefHeight="17.0" />
+      <Label layoutX="96.0" layoutY="26.0" text="Deadline:" />
+      <Label fx:id="deadlineLabel" layoutX="86.0" layoutY="43.0" prefHeight="17.0" />
+      <Label layoutX="874.0" layoutY="26.0" text="Avaiable transfers:" />
+      <Label fx:id="availableTransfersLabel" layoutX="922.0" layoutY="42.0" prefHeight="17.0" />
    </children>
 </AnchorPane>

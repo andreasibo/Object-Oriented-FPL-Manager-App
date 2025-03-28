@@ -15,7 +15,7 @@ import java.util.ArrayList;
  * The DataManager class handles the management of team data and user data for the Fantasy Premier League (FPL) game.
  */
 public class DataManager {
-    private ArrayList<String> teams;
+    private ArrayList<ArrayList<String>> teams;
 
      /**
      * Constructs a new DataManager object and initializes the teams.
@@ -42,9 +42,13 @@ public class DataManager {
                     continue;
                 }
                 String[] parts = line.split(";");
-                if (parts.length == 2) {
+                ArrayList<String> team =  new ArrayList<>();
+                if (parts.length == 3) {
                     String teamName = parts[1].trim();
-                    this.teams.add(teamName);
+                    String teamShort = parts[2].trim();
+                    team.add(teamName);
+                    team.add(teamShort);
+                    this.teams.add(team);
                 }
             }
         } catch (IOException e) {
@@ -108,6 +112,6 @@ public class DataManager {
     }
 
     // Getter
-    public ArrayList<String> getTeams() { return this.teams; }
+    public ArrayList<ArrayList<String>> getTeams() { return this.teams; }
 
 }
