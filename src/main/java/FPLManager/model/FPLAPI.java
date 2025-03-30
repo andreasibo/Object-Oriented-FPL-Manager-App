@@ -1,4 +1,4 @@
-package FPLManager;
+package FPLManager.model;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -30,8 +30,6 @@ public class FPLAPI {
      * Constructs an FPLAPI object with the specified manager ID and next gameweek.
      *
      * @param managerID The manager ID.
-     * @param nextGW    The next gameweek number.
-     * @throws IllegalArgumentException If the gameweek is out of range (1-38).
      */
     public FPLAPI(int managerID) {
         this.managerID = managerID;
@@ -78,7 +76,7 @@ public class FPLAPI {
     /**
      * Retrieves JSON data from the specified API endpoint and parses it into the specified type.
      *
-     * @param <T>           The type to parse the JSON data into.
+     * @param <T> The type to parse the JSON data into.
      * @param requestString The API endpoint.
      * @param typeReference The type reference for parsing the JSON data.
      * @return The parsed JSON data, or null if an error occurs.
@@ -88,21 +86,12 @@ public class FPLAPI {
         String finalRequestString = requestBuilder(requestString);
         try {
             HttpResponse<String> response = getResponse(finalRequestString);
-            if (response == null) {
-                System.err.println("Error: getResponse returned null for request: " + finalRequestString);
-                return null;
-            }
             String jsonBody = response.body();
             if (jsonBody == null || jsonBody.isEmpty()) {
                 throw new IllegalStateException("Empty or null JSON body recieved for request: " + finalRequestString);
             }
             ObjectMapper objectMapper = new ObjectMapper();
-            try {
-                return objectMapper.readValue(jsonBody, typeReference);
-            } catch (Exception e) {
-                System.err.println("Error parsing JSON for request: " + finalRequestString + " - " + e.getMessage());
-                return null;
-            }
+            return objectMapper.readValue(jsonBody, typeReference);
         } catch (Exception e) {
             System.err.println("Error with HTTP request in getJsonBody(): " + finalRequestString + " - " + e.getMessage());
             return null;
@@ -118,7 +107,7 @@ public class FPLAPI {
             for (Map<String, Object> event : events) {
                 if ((Boolean) event.get("is_next")) {
                     this.nextGW = (Integer) event.get("id");
-                    return; // Exit after setting nextGW
+                    return;
                 }
             }
         }
@@ -265,6 +254,7 @@ public class FPLAPI {
         this.remainingFixtures = remainingFixtures;
     }
 
+
     // Getters
     public int getManagerID() { return managerID; }
     public String getTeamName() { return teamName; }
@@ -275,10 +265,5 @@ public class FPLAPI {
     public ArrayList<Integer> getTransferHistory() { return transferHistory; }
     public Map<String, Object> getChips() { return chips; }
     public Map<Integer, List<Map<String, Object>>> getRemainingFixtures() {return this.remainingFixtures; }
-
-    public static void main(String[] args) {
-        FPLAPI me = new FPLAPI(3907402);
-        System.out.println(me.getChips());
-    }
 
 }

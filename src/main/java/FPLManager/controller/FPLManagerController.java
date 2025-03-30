@@ -1,4 +1,4 @@
-package FPLManager;
+package FPLManager.controller;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -11,11 +11,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import FPLManager.model.DataManager;
+import FPLManager.model.Manager;
+import FPLManager.model.Player;
+
 public class FPLManagerController {
 
     @FXML private TextField savedTeamNameField, teamIdField, saveTeamNameField, saveTeamIdField;
     @FXML private Button getSavedStatsButton, getStatsButton, saveUserButton;
-
     @FXML private TreeTableView<Player> statsTableView;
     @FXML private TreeTableColumn<Player, String> playerColumn, teamColumn, pointAverageColumn, selectedPercentageColumn;
     @FXML private TreeTableColumn<Player, Integer> fitPercentageColumn, pointsLastRoundColumn, transfersColumn;
@@ -27,6 +30,11 @@ public class FPLManagerController {
 
     @FXML
     public void initialize() {
+        dataManager = new DataManager();
+        setupTableViewColumns();
+    }
+
+    private void setupTableViewColumns() {
         playerColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("name"));
         teamColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("team"));
         fitPercentageColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("chanceOfPlaying"));
@@ -39,25 +47,17 @@ public class FPLManagerController {
         xgPer90Column.setCellValueFactory(new TreeItemPropertyValueFactory<>("xG"));
         xaPer90Column.setCellValueFactory(new TreeItemPropertyValueFactory<>("xA"));
         csPer90Column.setCellValueFactory(new TreeItemPropertyValueFactory<>("cleanSheetsPerGame"));
-
-        dataManager = new DataManager();
     }
 
     @FXML
     public void handleButtonClickSaved() {
         String teamName = savedTeamNameField.getText();
-        try {
-            int teamId = dataManager.findUser(teamName);
-
-            if (teamId != -1) {
-                fetchAndDisplayManagerData(teamId);
-            } else {
-                showAlert("Team not found", "Could not find team with name: " + teamName);
-            }
-        } catch (NumberFormatException e) {
-            showAlert("Invalid Input", "Please enter a valid Team ID");
+        int teamId = dataManager.findUser(teamName);
+        if (teamId != -1) {
+            fetchAndDisplayManagerData(teamId);
+        } else {
+            showAlert("Team not found", "Could not find team with name: " + teamName);
         }
-
     }
 
     @FXML
@@ -73,12 +73,9 @@ public class FPLManagerController {
 
     @FXML
     public void handleSaveUser() {
-        String teamName = saveTeamNameField.getText();
-        String teamIdStr = saveTeamIdField.getText();
-
         try {
-            int teamId = Integer.parseInt(teamIdStr);
-            dataManager.addUser(teamName, teamId);
+            int teamId = Integer.parseInt(saveTeamIdField.getText());
+            dataManager.addUser(saveTeamNameField.getText(), teamId);
             showAlert("Saved", "Team data saved successfully.");
         } catch (NumberFormatException e) {
             showAlert("Invalid Input", "Please enter a valid Team ID.");
@@ -86,35 +83,55 @@ public class FPLManagerController {
     }
 
     private void fetchAndDisplayManagerData(int teamId) {
-        manager = new Manager(teamId);
-
-        if (manager != null) {
+        try {
+            manager = new Manager(teamId);
             displayManagerData(manager);
             displayGWinfo(manager);
             displayChips(manager);
             displayTransfers(manager);
-        } else {
-            showAlert("Error", "Failed to retrieve manager data.");
+        } catch (Exception e) {
+            showAlert("Error", "Failed to retrieve manager data: " + e.getMessage());
         }
     }
 
     private void displayGWinfo(Manager manager) {
-        deadlineLabel.setText(manager.getGWDeadline());
+        if (manager != null && manager.getGWDeadline() != null) {
+            deadlineLabel.setText(manager.getGWDeadline());
+        } else {
+            deadlineLabel.setText("N/A");
+        }
     }
 
     private void displayTransfers(Manager manager) {
-        availableTransfersLabel.setText(manager.getAvailableTransfers() + "");
+        if (manager != null) {
+            availableTransfersLabel.setText(String.valueOf(manager.getAvailableTransfers()));
+        } else {
+            availableTransfersLabel.setText("N/A");
+        }
     }
 
     private void displayChips(Manager manager) {
-        wildcardLabel.setText(manager.getChipsAvailable().get("wildcard").toString());
-        benchboostLabel.setText(manager.getChipsAvailable().get("bboost").toString());
-        freehitLabel.setText(manager.getChipsAvailable().get("freehit").toString());
-        triplecaptainLabel.setText(manager.getChipsAvailable().get("3xc").toString());
-        assistantmanagerLabel.setText(manager.getChipsAvailable().get("manager").toString());
+        if (manager != null && manager.getChipsAvailable() != null) {
+            Map<String, Object> chips = manager.getChipsAvailable();
+            wildcardLabel.setText(String.valueOf(chips.get("wildcard")));
+            benchboostLabel.setText(String.valueOf(chips.get("bboost")));
+            freehitLabel.setText(String.valueOf(chips.get("freehit")));
+            triplecaptainLabel.setText(String.valueOf(chips.get("3xc")));
+            assistantmanagerLabel.setText(String.valueOf(chips.get("manager")));
+        } else {
+            wildcardLabel.setText("N/A");
+            benchboostLabel.setText("N/A");
+            freehitLabel.setText("N/A");
+            triplecaptainLabel.setText("N/A");
+            assistantmanagerLabel.setText("N/A");
+        }
     }
 
     private void displayManagerData(Manager manager) {
+        if (manager == null) {
+            statsTableView.setRoot(null);
+            return;
+        }
         ArrayList<Player> players = manager.getTeamPlayers();
         ObservableList<TreeItem<Player>> treeItems = FXCollections.observableArrayList();
 
@@ -123,34 +140,29 @@ public class FPLManagerController {
             treeItems.add(treeItem);
         }
 
-        TreeItem<Player> root = new TreeItem<>(new Player(-1, -1, null, null));
+        TreeItem<Player> root = new TreeItem<>(new Player(-1, -1, null, null, null));
         root.getChildren().addAll(treeItems);
         statsTableView.setRoot(root);
         statsTableView.setShowRoot(false);
 
-        playerColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getValue().getName()));
-        teamColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getValue().getTeam()));
-        fitPercentageColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().getValue().getChanceOfPlaying()).asObject());
-        pointsLastRoundColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().getValue().getPointsLastRound()).asObject());
-        priceColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleDoubleProperty(cellData.getValue().getValue().getPrice()).asObject());
-        costChangeColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleDoubleProperty(cellData.getValue().getValue().getCostChange()).asObject());
-        pointAverageColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getValue().getAvgPoints()));
-        selectedPercentageColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getValue().getSelectedBy()));
-        transfersColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().getValue().getTransferBalance()).asObject());
-        xgPer90Column.setCellValueFactory(cellData -> new javafx.beans.property.SimpleDoubleProperty(cellData.getValue().getValue().getxG()).asObject());
-        xaPer90Column.setCellValueFactory(cellData -> new javafx.beans.property.SimpleDoubleProperty(cellData.getValue().getValue().getxA()).asObject());
-        csPer90Column.setCellValueFactory(cellData -> new javafx.beans.property.SimpleDoubleProperty(cellData.getValue().getValue().getCleanSheetsPerGame()).asObject());
-        
-        if (!players.isEmpty() && players.get(0).getFixtures() != null) {
-                Map<Integer, List<String>> firstPlayerFixtures = players.get(0).getFixtures();
-                List<Integer> gameweeks = new ArrayList<>(firstPlayerFixtures.keySet());
+        addFixtureColumns(players);
+    }
 
-                for (int gameweek : gameweeks) {
+    private void addFixtureColumns(ArrayList<Player> players) {
+        statsTableView.getColumns().removeIf(column -> column.getText().startsWith("GW"));
+        if (players != null && !players.isEmpty()) {
+            if (players.get(0).getFixtures() != null) {
+                Map<Integer, List<String>> firstPlayerFixtures = players.get(0).getFixtures();
+                for (int gameweek : firstPlayerFixtures.keySet()) {
                     TreeTableColumn<Player, String> gameweekColumn = new TreeTableColumn<>("GW " + gameweek);
-                    gameweekColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getValue().getFixtureForGameweek(gameweek)));
+                    gameweekColumn.setCellValueFactory(cellData -> {
+                        String fixture = cellData.getValue().getValue().getFixtureForGameweek(gameweek);
+                        return new SimpleStringProperty(fixture.isEmpty() ? "N/A" : fixture); // Handle empty string
+                    });
                     statsTableView.getColumns().add(gameweekColumn);
                 }
             }
+        }
     }
 
     private void showAlert(String title, String content) {

@@ -7,7 +7,7 @@
 <?import javafx.scene.control.TreeTableView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="700.0" prefWidth="1060.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="FPLManager.FPLManagerController">
+<AnchorPane prefHeight="700.0" prefWidth="1060.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="FPLManager.controller.FPLManagerController">
    <children>
       <Label layoutX="269.0" layoutY="35.0" text="Saved Team ID?" />
       <TextField fx:id="savedTeamNameField" layoutX="268.0" layoutY="52.0" promptText="Enter Team name" />
