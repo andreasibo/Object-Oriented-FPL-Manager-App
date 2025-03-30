@@ -1,4 +1,4 @@
-package FPLManager;
+package FPLManager.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,14 +11,14 @@ import java.util.Map;
  * It contains various attributes of the manager and methods to access these attributes.
  */
 public class Manager implements ID{
-    private int ID;
-    private int nextGW;
-    private String teamName;
-    private ArrayList<Integer> teamPlayersID;
-    private ArrayList<Player> teamPlayers;
-    private HashMap<String, Object> chipsAvailable;
-    private int availableTransfers;
-    private String gwDeadline;
+    private final int ID;
+    private final int nextGW;
+    private final String teamName;
+    private final ArrayList<Integer> teamPlayersID;
+    private final ArrayList<Player> teamPlayers;
+    private final Map<String, Object> chipsAvailable;
+    private final int availableTransfers;
+    private final String gwDeadline;
 
     /**
      * Constructs a new Manager object with the specified manager ID and next game week.
@@ -34,9 +34,9 @@ public class Manager implements ID{
         this.teamName = managerData.getTeamName();
         this.teamPlayersID = managerData.getTeamPlayers();
         this.gwDeadline = deadline.getGWDeadLine();
-        setChipsAvailable(managerData.getChips());
-        setAvailableTransfers(managerData.getTransferHistory());
-        setTeamPlayers(managerData.getPlayerData(),managerData.getRemainingFixtures());
+        this.chipsAvailable = processChipsAvailable(managerData.getChips());
+        this.availableTransfers = calculateAvailableTransfers(managerData.getTransferHistory());
+        this.teamPlayers = createTeamPlayers(managerData.getPlayerData(), managerData.getRemainingFixtures());
     }
 
     /**
@@ -44,7 +44,7 @@ public class Manager implements ID{
      *
      * @param transferHistoryData a list containing the transfer history data
      */
-    private void setAvailableTransfers(ArrayList<Integer> transferHistoryData) {
+    private int calculateAvailableTransfers(ArrayList<Integer> transferHistoryData) {
         int availableTransfers = 1;
         int wildcardGW = -1;
 
@@ -65,7 +65,7 @@ public class Manager implements ID{
                 availableTransfers = 0;
             }
         }
-        this.availableTransfers = availableTransfers;
+        return availableTransfers;
     }
 
     /**
@@ -73,27 +73,28 @@ public class Manager implements ID{
      *
      * @param chipsUsed a map containing the chips data
      */
-    private void setChipsAvailable(Map<String, Object> chipsUsed) {
-        this.chipsAvailable = new HashMap<String, Object>();
+    private Map<String, Object> processChipsAvailable(Map<String, Object> chipsUsed) {
+        Map<String, Object> chipsAvailable = new HashMap<String, Object>();
         List<String> chips = Arrays.asList("wildcard", "3xc", "bboost", "manager", "freehit");
         for (String chip : chips) {
             if (chipsUsed != null && chipsUsed.containsKey(chip)) {
                     int usedGW = (Integer) chipsUsed.get(chip);
                     if (chip.equals("wildcard")) {
                         if (this.nextGW < 18 && usedGW < 18) {
-                            this.chipsAvailable.put(chip, usedGW);
+                            chipsAvailable.put(chip, usedGW);
                         } else if (this.nextGW > 18 && usedGW > 18) {
-                            this.chipsAvailable.put(chip, usedGW);
+                            chipsAvailable.put(chip, usedGW);
                         } else {
-                            this.chipsAvailable.put(chip, "Available");
+                            chipsAvailable.put(chip, "Available");
                         }  
                     } else {
-                        this.chipsAvailable.put(chip, usedGW);
+                        chipsAvailable.put(chip, usedGW);
                     }
             } else {
-                this.chipsAvailable.put(chip, "Available");
+                chipsAvailable.put(chip, "Available");
             }
         }
+        return chipsAvailable;
     }
 
     /**
@@ -102,13 +103,18 @@ public class Manager implements ID{
      * @param allPlayerData a map containing all player data
      * @param fixtureData a map containing the fixture data
      */
-    private void setTeamPlayers(Map<Integer, Map<String, Object>> allPlayerData, Map<Integer, List<Map<String, Object>>> fixtureData) {
-        this.teamPlayers = new ArrayList<>();
+    private ArrayList<Player> createTeamPlayers(Map<Integer, Map<String, Object>> allPlayerData, Map<Integer, List<Map<String, Object>>> fixtureData) {
+        ArrayList<Player> teamPlayers = new ArrayList<>();
         for (int playerID : this.teamPlayersID) {
             Map<String, Object> playerData = allPlayerData.get(playerID);
-            Player player = new Player(playerID, this.nextGW, playerData, fixtureData);
-            this.teamPlayers.add(player);
+            if (playerData != null) {
+                Player player = new Player(playerID, this.nextGW, playerData, fixtureData, new DataManager());
+                teamPlayers.add(player);
+            } else {
+                System.err.println("Warning: Player data not found for player ID: " + playerID);
+            }
         }
+        return teamPlayers;
     }
 
     // Getters
@@ -116,7 +122,7 @@ public class Manager implements ID{
     public ArrayList<Integer> getTeamPlayersID() { return this.teamPlayersID; }
     public int getAvailableTransfers() { return this.availableTransfers; }
     public int getNextGW() { return this.nextGW; }
-    public HashMap<String, Object> getChipsAvailable() { return this.chipsAvailable; }
+    public Map<String, Object> getChipsAvailable() { return this.chipsAvailable; }
     public ArrayList<Player> getTeamPlayers() { return this.teamPlayers; }
     public String getGWDeadline() { return this.gwDeadline; }
 

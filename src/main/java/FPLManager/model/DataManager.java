@@ -1,42 +1,45 @@
-package FPLManager;
+package FPLManager.model;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  * The DataManager class handles the management of team data and user data for the Fantasy Premier League (FPL) game.
  */
 public class DataManager {
-    private ArrayList<ArrayList<String>> teams;
+    private final ArrayList<ArrayList<String>> teams;
 
-     /**
+    /**
      * Constructs a new DataManager object and initializes the teams.
      */
     public DataManager() {
-        setTeams();
+        this.teams = loadTeams();
     }
 
     /**
      * Sets the teams by reading from the 'teams.csv' file.
+     * 
+     * @throws IllegalStateException if file not found
      */
-    private void setTeams() {
-        this.teams = new ArrayList<>();
+    private ArrayList<ArrayList<String>> loadTeams() {
+        ArrayList<ArrayList<String>> teams = new ArrayList<>();
         try (InputStream inputStream = getClass().getResourceAsStream("/FPLManager/teams.csv");
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+        Scanner scanner = new Scanner(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
             if (inputStream == null) {
                 throw new IllegalStateException("Error: 'teams.csv' resource not found");
             }
-            String line;
+
             boolean firstLine = true;
-            while ((line = reader.readLine()) != null) {
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
                 if (firstLine) {
                     firstLine = false;
                     continue;
@@ -48,12 +51,13 @@ public class DataManager {
                     String teamShort = parts[2].trim();
                     team.add(teamName);
                     team.add(teamShort);
-                    this.teams.add(team);
+                    teams.add(team);
                 }
             }
         } catch (IOException e) {
             System.err.println("Error: file 'teams.csv' could not be opened. Does it exist?");
         }
+        return teams;
     }
 
     /**
@@ -65,13 +69,12 @@ public class DataManager {
     public void addUser(String teamName, int teamID) {
         Path currentPath = Paths.get(".");
         Path filePath = currentPath.resolve("src/main/resources/FPLManager/").resolve("users.txt").normalize();
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath.toString(), true))) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(filePath.toString(), true))) {
 
-            writer.write(teamName + "," + teamID);
-            writer.newLine();
+            writer.println(teamName + "," + teamID);
 
         } catch (IOException e) {
-            System.err.println("Error: file 'teams.csv' could not be opened. Does it exist?");
+            System.err.println("Error: file 'user.txt' could not be opened. Does it exist?");
         }
     }
 
@@ -83,15 +86,15 @@ public class DataManager {
      */
     public int findUser(String teamName) {
         try (InputStream inputStream = getClass().getResourceAsStream("/FPLManager/users.txt");
-             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+             Scanner scanner = new Scanner(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
 
             if (inputStream == null) {
                 throw new IllegalStateException("Error: 'users.txt' resource not found");
             }
 
-            String line;
             boolean firstLine = true;
-            while ((line = reader.readLine()) != null) {
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
                 if (firstLine) {
                     firstLine = false;
                     continue;
