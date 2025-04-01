@@ -14,7 +14,11 @@ import java.util.Map;
 import FPLManager.model.DataManager;
 import FPLManager.model.Manager;
 import FPLManager.model.Player;
+import FPLManager.model.DummyPlayer;
 
+/**
+ * Controller class for managing the Fantasy Premier League (FPL) application.
+ */
 public class FPLManagerController {
 
     @FXML private TextField savedTeamNameField, teamIdField, saveTeamNameField, saveTeamIdField;
@@ -28,12 +32,18 @@ public class FPLManagerController {
     private Manager manager;
     private DataManager dataManager;
 
+    /**
+     * Initializes the controller class.
+     */
     @FXML
     public void initialize() {
         dataManager = new DataManager();
         setupTableViewColumns();
     }
 
+    /**
+     * Sets up the columns for the stats table view.
+     */
     private void setupTableViewColumns() {
         playerColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("name"));
         teamColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("team"));
@@ -49,6 +59,9 @@ public class FPLManagerController {
         csPer90Column.setCellValueFactory(new TreeItemPropertyValueFactory<>("cleanSheetsPerGame"));
     }
 
+    /**
+     * Handles the button click event for fetching saved team stats.
+     */
     @FXML
     public void handleButtonClickSaved() {
         String teamName = savedTeamNameField.getText();
@@ -60,6 +73,9 @@ public class FPLManagerController {
         }
     }
 
+    /**
+     * Handles the button click event for fetching team stats by ID.
+     */
     @FXML
     public void handleButtonClickID() {
         try {
@@ -68,9 +84,11 @@ public class FPLManagerController {
         } catch (NumberFormatException e) {
             showAlert("Invalid Input", "Please enter a valid Team ID.");
         }
-
     }
 
+    /**
+     * Handles the button click event for saving user data.
+     */
     @FXML
     public void handleSaveUser() {
         try {
@@ -82,6 +100,11 @@ public class FPLManagerController {
         }
     }
 
+    /**
+     * Fetches and displays manager data for the given team ID.
+     *
+     * @param teamId the ID of the team.
+     */
     private void fetchAndDisplayManagerData(int teamId) {
         try {
             manager = new Manager(teamId);
@@ -94,6 +117,11 @@ public class FPLManagerController {
         }
     }
 
+    /**
+     * Displays game week information for the manager.
+     *
+     * @param manager the manager object.
+     */
     private void displayGWinfo(Manager manager) {
         if (manager != null && manager.getGWDeadline() != null) {
             deadlineLabel.setText(manager.getGWDeadline());
@@ -102,6 +130,11 @@ public class FPLManagerController {
         }
     }
 
+    /**
+     * Displays transfer information for the manager.
+     *
+     * @param manager the manager object.
+     */
     private void displayTransfers(Manager manager) {
         if (manager != null) {
             availableTransfersLabel.setText(String.valueOf(manager.getAvailableTransfers()));
@@ -110,6 +143,11 @@ public class FPLManagerController {
         }
     }
 
+    /**
+     * Displays chip information for the manager.
+     *
+     * @param manager the manager object.
+     */
     private void displayChips(Manager manager) {
         if (manager != null && manager.getChipsAvailable() != null) {
             Map<String, Object> chips = manager.getChipsAvailable();
@@ -127,6 +165,11 @@ public class FPLManagerController {
         }
     }
 
+    /**
+     * Displays manager data in the stats table view.
+     *
+     * @param manager the manager object.
+     */
     private void displayManagerData(Manager manager) {
         if (manager == null) {
             statsTableView.setRoot(null);
@@ -140,7 +183,7 @@ public class FPLManagerController {
             treeItems.add(treeItem);
         }
 
-        TreeItem<Player> root = new TreeItem<>(new Player(-1, -1, null, null, null));
+        TreeItem<Player> root = new TreeItem<>(new DummyPlayer());
         root.getChildren().addAll(treeItems);
         statsTableView.setRoot(root);
         statsTableView.setShowRoot(false);
@@ -148,6 +191,11 @@ public class FPLManagerController {
         addFixtureColumns(players);
     }
 
+    /**
+     * Adds fixture columns to the stats table view.
+     *
+     * @param players the list of players.
+     */
     private void addFixtureColumns(ArrayList<Player> players) {
         statsTableView.getColumns().removeIf(column -> column.getText().startsWith("GW"));
         if (players != null && !players.isEmpty()) {
@@ -157,7 +205,7 @@ public class FPLManagerController {
                     TreeTableColumn<Player, String> gameweekColumn = new TreeTableColumn<>("GW " + gameweek);
                     gameweekColumn.setCellValueFactory(cellData -> {
                         String fixture = cellData.getValue().getValue().getFixtureForGameweek(gameweek);
-                        return new SimpleStringProperty(fixture.isEmpty() ? "N/A" : fixture); // Handle empty string
+                        return new SimpleStringProperty(fixture.isEmpty() ? "" : fixture);
                     });
                     statsTableView.getColumns().add(gameweekColumn);
                 }
@@ -165,6 +213,12 @@ public class FPLManagerController {
         }
     }
 
+    /**
+     * Shows an alert with the given title and content.
+     *
+     * @param title the title of the alert.
+     * @param content the content of the alert.
+     */
     private void showAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
@@ -172,3 +226,4 @@ public class FPLManagerController {
         alert.showAndWait();
     }
 }
+

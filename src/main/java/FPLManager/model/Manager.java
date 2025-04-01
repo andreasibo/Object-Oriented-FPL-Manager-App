@@ -2,6 +2,7 @@ package FPLManager.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,7 +11,7 @@ import java.util.Map;
  * The Manager class represents a manager in the Fantasy Premier League (FPL) game.
  * It contains various attributes of the manager and methods to access these attributes.
  */
-public class Manager implements ID{
+public class Manager {
     private final int ID;
     private final int nextGW;
     private final String teamName;
@@ -105,15 +106,36 @@ public class Manager implements ID{
      */
     private ArrayList<Player> createTeamPlayers(Map<Integer, Map<String, Object>> allPlayerData, Map<Integer, List<Map<String, Object>>> fixtureData) {
         ArrayList<Player> teamPlayers = new ArrayList<>();
+        DataManager dataManager = new DataManager();
+
         for (int playerID : this.teamPlayersID) {
             Map<String, Object> playerData = allPlayerData.get(playerID);
             if (playerData != null) {
-                Player player = new Player(playerID, this.nextGW, playerData, fixtureData, new DataManager());
+                String position = Player.getPositionFromPlayerData(playerData, "element_type");
+
+                Player player;
+                switch (position) {
+                    case "Goalkeeper":
+                        player = new Goalkeeper(playerID, this.nextGW, playerData, fixtureData, dataManager);
+                        break;
+                    case "Defender":
+                        player = new Defender(playerID, this.nextGW, playerData, fixtureData, dataManager);
+                        break;
+                    case "Midfielder":
+                        player = new Midfielder(playerID, this.nextGW, playerData, fixtureData, dataManager);
+                        break;
+                    case "Forward":
+                        player = new Forward(playerID, this.nextGW, playerData, fixtureData, dataManager);
+                        break;
+                    default:
+                        System.err.println("Warning: Unknown Player Position for player ID: " + playerID);
+                        continue;
+                }
                 teamPlayers.add(player);
-            } else {
-                System.err.println("Warning: Player data not found for player ID: " + playerID);
             }
         }
+        Collections.sort(teamPlayers, new PlayerPositionComparator());
+        
         return teamPlayers;
     }
 
@@ -125,9 +147,5 @@ public class Manager implements ID{
     public Map<String, Object> getChipsAvailable() { return this.chipsAvailable; }
     public ArrayList<Player> getTeamPlayers() { return this.teamPlayers; }
     public String getGWDeadline() { return this.gwDeadline; }
-
-    @Override
-    public int getID() {
-        return this.ID;
-    }
+    public int getID() { return this.ID; }
 }

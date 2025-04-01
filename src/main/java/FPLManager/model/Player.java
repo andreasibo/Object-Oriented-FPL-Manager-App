@@ -9,7 +9,7 @@ import java.util.TreeMap;
  * The Player class represents a player in the Fantasy Premier League (FPL) game.
  * It contains various attributes of the player and methods to access these attributes.
  */
-public class Player implements ID {
+public abstract class Player {
     
     private final int ID;
     private final int nextGW;
@@ -196,6 +196,36 @@ public class Player implements ID {
         return "";
     }
 
+    /**
+     * Retrieves the player's position from the player data map.
+     *
+     * @param playerData a map containing player data
+     * @param key        the key to retrieve the value
+     * @return the player's position
+     */
+    public static String getPositionFromPlayerData(Map<String, Object> playerData, String key) {
+        if (playerData == null || !playerData.containsKey(key)) {
+            return "Unknown";
+        }
+        Integer pos = (Integer) playerData.get(key);
+        if (pos == null) {
+            return "Unknown";
+        }
+
+        switch (pos) {
+            case 1:
+                return "Goalkeeper";
+            case 2:
+                return "Defender";
+            case 3:
+                return "Midfielder";
+            case 4:
+                return "Forward";
+            default:
+                return "Unknown";
+        }
+    }
+
     // Getters
     public String getName() {return name;}
     public int getChanceOfPlaying() {return chanceOfPlaying;}
@@ -210,10 +240,7 @@ public class Player implements ID {
     public double getCleanSheetsPerGame() {return cleanSheets;}
     public String getTeam() {return team;}
     public Map<Integer, List<String>> getFixtures() {return fixtures;}
+    public int getID() { return this.ID; }
 
-    @Override
-    public int getID() {
-        return this.ID;
-    }
 
 }
