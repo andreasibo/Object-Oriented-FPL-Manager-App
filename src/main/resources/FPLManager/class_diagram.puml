@@ -1,0 +1,192 @@
+@startuml class_diagram
+
+package java {
+    package FPLManager.model {
+              class Manager {
+                - ID: int
+                - nextGW: int
+                - teamName: String
+                - teamPlayersID: ArrayList<Integer>
+                - teamPlayers: ArrayList<Player>
+                - chipsAvailable: Map<String, Object>
+                - availableTransfers: int
+                - gwDeadline: String
+                + Manager(managerID: int)
+                - calculateAvailableTransfers(transferHistoryData: ArrayList<Integer>)
+                - processChipsAvailable(chipsUsed: Map<String, Object>)
+                - createTeamPlayers(allPlayerData: Map<Integer, Map<String, Object>>, fixtureData: Map<Integer, List<Map<String, Object>>>)
+                + getName()
+                + getTeamPlayersID()
+                + getAvailableTransfers()
+                + getNextGW()
+                + getChipsAvailable()
+                + getTeamPlayers()
+                + getGWDeadline()
+                + getID()
+            }
+
+            abstract class Player {
+                - ID: int
+                - nextGW: int
+                - name: String
+                - chanceOfPlaying: int
+                - costChange: double
+                - pointsLastRound: int
+                - price: double
+                - avgPoints: String
+                - selectedBy: String
+                - transferBalance: int
+                - xG: double
+                - xA: double
+                - cleanSheets: double
+                - teamID: int
+                - team: String
+                - fixtures: Map<Integer, List<String>>
+                + Player(ID: int, nextGW: int, playerData: Map<String, Object>, fixtureData: Map<Integer, List<Map<String, Object>>>, data: DataManager)
+                - getNameFromPlayerData(playerData: Map<String, Object>)
+                - getIntFromPlayerData(playerData: Map<String, Object>, key: String)
+                - getDoubleFromPlayerData(playerData: Map<String, Object>, key: String, divisor: double)
+                - getStringFromPlayerData(playerData: Map<String, Object>, key: String)
+                - getTransferBalance(playerData: Map<String, Object>)
+                - getTeamName(teams: ArrayList<ArrayList<String>>)
+                - processFixtures(fixtureData: Map<Integer, List<Map<String, Object>>>, teams: ArrayList<ArrayList<String>>)
+                + getFixtureForGameweek(gameweek: int)
+                + {static} getPositionFromPlayerData(playerData: Map<String, Object>, key: String)
+                + getName()
+                + getChanceOfPlaying()
+                + getCostChange()
+                + getPointsLastRound()
+                + getPrice()
+                + getAvgPoints()
+                + getSelectedBy()
+                + getTransferBalance()
+                + getXG()
+                + getXA()
+                + getCleanSheetsPerGame()
+                + getTeam()
+                + getFixtures()
+                + getID()
+            }
+
+            class Goalkeeper extends Player {
+                + Goalkeeper(ID: int, nextGW: int, playerData: Map<String, Object>, fixtureData: Map<Integer, List<Map<String, Object>>>, data: DataManager)
+            }
+
+            class Defender extends Player {
+                + Defender(ID: int, nextGW: int, playerData: Map<String, Object>, fixtureData: Map<Integer, List<Map<String, Object>>>, data: DataManager)
+            }
+
+            class Midfielder extends Player {
+                + Midfielder(ID: int, nextGW: int, playerData: Map<String, Object>, fixtureData: Map<Integer, List<Map<String, Object>>>, data: DataManager)
+            }
+
+            class Forwarder extends Player {
+                + Forwarder(ID: int, nextGW: int, playerData: Map<String, Object>, fixtureData: Map<Integer, List<Map<String, Object>>>, data: DataManager)
+            }
+            
+            class DummyPlayer extends Player {
+                + DummyPlayer()
+            }
+
+            class DataManager {
+                - teams: ArrayList<ArrayList<String>>
+                + DataManager()
+                - loadTeams()
+                + addUser(teamName: String, teamID: int)
+                + findUser(teamName: String)
+                + getTeams()
+            }
+
+            class DeadlineHandler {
+                - gwDeadline: String
+                + DeadlineHandler(gwInfo: List<Map<String, Object>>)
+                - setGWDeadline(gwInfo: List<Map<String, Object>>)
+                + getGWDeadLine()
+            }
+
+            interface IDataRetriever {
+                + getTeamName()
+                + getTeamPlayers()
+                + getNextGW()
+                + getPlayerData()
+                + getNextGWInfo()
+                + getTransferHistory()
+                + getChips()
+                + getRemainingFixtures()
+            }
+
+            class PlayerPositionComparator implements Comparator<Player> {
+                + compare(player1: Player, player2: Player)
+                + getPositionOrder(position: String)
+            }
+
+            class FPLAPI implements IDataRetriever {
+                - managerID: int
+                - teamName: String
+                - teamPlayers: ArrayList<Integer>
+                - nextGW: int
+                - playerData: Map<Integer, Map<String, Object>>
+                - nextGWInfo: List<Map<String, Object>>
+                - transferHistory: ArrayList<Integer>
+                - chips: Map<String, Object>
+                - remainingFixtures: Map<Integer, List<Map<String, Object>>>
+                + FPLAPI(managerID: int)
+                + requestBuilder(requestString: String)
+                + getResponse(requestString: String)
+                + getJsonBody(requestString: String, typeReference: String)
+                - setNextGW()
+                - setTeamName()
+                - setTeamPlayers()
+                - setPlayerData()
+                + setNextGWInfo()
+                + setTransferHistory()
+                + setChips()
+                - setRemainingFixtures()
+                + getManagerID()
+                + getTeamName()
+                + getTeamPlayers()
+                + getNextGW()
+                + getPlayerData()
+                + getNextGWInfo()
+                + getTransferHistory()
+                + getChips()
+                + getRemainingFixtures()
+            }
+
+            class HttpResponse {
+                ' (Class details omitted for brevity)
+            }
+
+            PlayerPositionComparator ..|> Comparator : implements
+            PlayerPositionComparator --> Player : uses
+            FPLAPI ..|> IDataRetriever : implements
+            FPLAPI --> HttpResponse : uses
+            Manager --> Player: contains >
+            Manager --> DataManager: uses >
+            Player --> DataManager: uses >
+            FPLAPI --> DataManager: uses >
+            Manager --> DeadlineHandler: uses >
+            DeadlineHandler --> FPLAPI: uses >
+            Goalkeeper --|> Player : extends
+            Defender --|> Player : extends
+            Midfielder --|> Player : extends
+            Forwarder --|> Player : extends
+            DummyPlayer --|> Player : extends
+
+    }
+    package resources {
+        package view {
+            note top of FPLAPI
+                Uses:
+                - app.fxml
+                - application.css
+            end note
+        }
+        note top of DataManager
+            Uses:
+            - teams.csv
+            - users.txt
+        end note
+    }
+}
+@enduml
