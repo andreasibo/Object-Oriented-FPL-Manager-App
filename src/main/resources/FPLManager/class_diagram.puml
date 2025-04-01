@@ -1,6 +1,61 @@
 @startuml class_diagram
 
 package java {
+    package FPLManager.controller {
+        class FPLManagerApp extends Application {
+            + void start(Stage primaryStage)
+        }
+        note top of FPLManagerApp
+            Application entry point
+        end note
+
+        class FPLManagerController {
+            - savedTeamNameField: TextField
+            - teamIdField: TextField
+            - saveTeamNameField: TextField
+            - saveTeamIdField: TextField
+            - getSavedStatsButton: Button
+            - getStatsButton: Button
+            - saveUserButton: Button
+            - statsTableView: TreeTableView<Player>
+            - playerColumn: TreeTableColumn<Player, String>
+            - teamColumn: TreeTableColumn<Player, String>
+            - pointAverageColumn: TreeTableColumn<Player, String>
+            - selectedPercentageColumn: TreeTableColumn<Player, String>
+            - fitPercentageColumn: TreeTableColumn<Player, Integer>
+            - pointsLastRoundColumn: TreeTableColumn<Player, Integer>
+            - transfersColumn: TreeTableColumn<Player, Integer>
+            - priceColumn: TreeTableColumn<Player, Double>
+            - costChangeColumn: TreeTableColumn<Player, Double>
+            - xgPer90Column: TreeTableColumn<Player, Double>
+            - xaPer90Column: TreeTableColumn<Player, Double>
+            - csPer90Column: TreeTableColumn<Player, Double>
+            - deadlineLabel: Label
+            - wildcardLabel: Label
+            - benchboostLabel: Label
+            - triplecaptainLabel: Label
+            - freehitLabel: Label
+            - assistantmanagerLabel: Label
+            - availableTransfersLabel: Label
+            - manager: Manager
+            - dataManager: DataManager
+            + initialize()
+            - setupTableViewColumns()
+            + handleButtonClickSaved()
+            + handleButtonClickID()
+            + handleSaveUser()
+            - fetchAndDisplayManagerData(teamId: int)
+            - displayGWinfo(manager: Manager)
+            - displayTransfers(manager: Manager)
+            - displayChips(manager: Manager)
+            - displayManagerData(manager: Manager)
+            - addFixtureColumns(players: ArrayList<Player>)
+            - showAlert(title: String, content: String)
+        }
+        note top of FPLManagerController
+            Controller for FXML file
+        end note
+    }
     package FPLManager.model {
               class Manager {
                 - ID: int
@@ -174,19 +229,12 @@ package java {
             DummyPlayer --|> Player : extends
 
     }
-    package resources {
-        package view {
-            note top of FPLAPI
-                Uses:
-                - app.fxml
-                - application.css
-            end note
-        }
-        note top of DataManager
-            Uses:
-            - teams.csv
-            - users.txt
-        end note
-    }
 }
+
+hide Goalkeeper methods
+hide Defender methods
+hide Midfielder methods
+hide Forwarder methods
+hide DummyPlayer methods
+
 @enduml
