@@ -1,0 +1,132 @@
+/* Add stylesheets="@fpl-manager-style.css" in the anchor-label */
+
+/* General Styles */
+.root {
+    -fx-font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    -fx-background-color: #f4f6f8; /* Light background */
+    background-color: #f4f6f8;
+}
+
+.label {
+    -fx-font-size: 14px;
+    font-size: 14px;
+    -fx-text-fill: #333;
+    color: #333;
+}
+
+.button {
+    -fx-background-color: #1976d2; /* Primary blue */
+    background-color: #1976d2;
+    -fx-text-fill: white;
+    color: white;
+    -fx-padding: 8px 15px;
+    padding: 8px 15px;
+    -fx-border-radius: 4px;
+    border-radius: 4px;
+    -fx-font-size: 14px;
+    font-size: 14px;
+    -fx-cursor: hand;
+    cursor: pointer;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 3, 0, 0, 1); /* Subtle shadow */
+}
+
+.button:hover {
+    -fx-background-color: #1565c0; /* Darker blue on hover */
+    background-color: #1565c0;
+}
+
+.text-field {
+    -fx-padding: 8px;
+    padding: 8px;
+    -fx-border-color: #ccc;
+    border-color: #ccc;
+    -fx-border-radius: 4px;
+    border-radius: 4px;
+    -fx-font-size: 14px;
+    font-size: 14px;
+    -fx-background-color: white;
+    background-color: white;
+    -fx-effect: innershadow(three-pass-box, rgba(0,0,0,0.05), 3, 0, 0, 1); /* Subtle inner shadow */
+}
+
+/* Specific Element Styles */
+.stats-table-view {
+    -fx-background-color: white;
+    background-color: white;
+    -fx-border-color: #ddd;
+    border-color: #ddd;
+    -fx-border-width: 1px;
+    border-width: 1px;
+    -fx-border-radius: 4px;
+    border-radius: 4px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 3, 0, 0, 1); /* Subtle shadow */
+}
+
+.stats-table-view .column-header {
+    -fx-background-color: #e8eaf6; /* Light header background */
+    background-color: #e8eaf6;
+    -fx-text-fill: #333;
+    color: #333;
+    -fx-font-weight: 600; /* Semi-bold */
+    font-weight: 600;
+}
+
+.stats-table-view .tree-table-cell {
+    -fx-padding: 8px;
+    padding: 8px;
+    -fx-text-fill: #333;
+    color: #333;
+}
+
+.stats-table-view .tree-table-row:even {
+    -fx-background-color: #f9f9f9; /* Lighter even row background */
+    background-color: #f9f9f9;
+}
+
+/* Header Section */
+.header-section {
+    -fx-background-color: #e8eaf6;
+    background-color: #e8eaf6;
+    -fx-padding: 15px;
+    padding: 15px;
+    -fx-border-radius: 4px;
+    border-radius: 4px;
+    -fx-margin-bottom: 20px;
+    margin-bottom: 20px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 3, 0, 0, 1); /* Subtle shadow */
+}
+
+/* Chip Labels */
+.chip-label {
+    -fx-font-weight: 600; /* Semi-bold */
+    font-weight: 600;
+    -fx-text-fill: #212121;
+    color: #212121;
+}
+
+/* Deadline and Available Transfers Labels */
+.info-label {
+    -fx-font-weight: 500; /* Medium weight */
+    font-weight: 500;
+    -fx-text-fill: #424242;
+    color: #424242;
+}
+
+/* Specific AnchorPane Styles */
+.anchor-pane {
+    -fx-padding: 20px; /* Add padding to AnchorPane content */
+    padding: 20px;
+}
+
+/* Spacing between elements inside the AnchorPane. */
+.anchor-pane > * {
+    -fx-margin-bottom: 10px; /* Add spacing between elements */
+    margin-bottom: 10px;
+}
+
+/* Adjust the Tableview to take the whole space, minus the padding */
+.stats-table-view {
+  -fx-pref-width: 1020px;
+  -fx-pref-height: 447px;
+}

@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * A class for interacting with the Fantasy Premier League (FPL) API.
  * This class provides methods to retrieve manager data, team information, player data, and upcoming fixtures.
  */
-public class FPLAPI {
+public class FPLAPI implements IDataRetriever{
     private int managerID;
     private String teamName;
     private ArrayList<Integer> teamPlayers;
@@ -238,15 +238,15 @@ public class FPLAPI {
         Map<Integer, List<Map<String, Object>>> remainingFixtures = new HashMap<>();
         if (allFixtures != null) {
             for (Map<String, Object> fixture : allFixtures) {
-                int gameweek = (Integer) fixture.get("event");
+                int gameweek = (fixture.get("event") != null) ? (Integer) fixture.get("event") : -1;
+                int homeTeamId = (fixture.get("team_h") != null) ? (Integer) fixture.get("team_h") : -1;
+                int awayTeamId = (fixture.get("team_a") != null) ? (Integer) fixture.get("team_a") : -1; 
+    
                 if (gameweek >= this.nextGW) {
-                    int homeTeamId = (Integer) fixture.get("team_h");
-                    int awayTeamId = (Integer) fixture.get("team_a");
-
                     Map<String, Object> fixtureData = new HashMap<>();
                     fixtureData.put("HomeTeam", homeTeamId);
                     fixtureData.put("AwayTeam", awayTeamId);
-
+    
                     remainingFixtures.computeIfAbsent(gameweek, k -> new ArrayList<>()).add(fixtureData);
                 }
             }
@@ -257,13 +257,21 @@ public class FPLAPI {
 
     // Getters
     public int getManagerID() { return managerID; }
+    @Override
     public String getTeamName() { return teamName; }
+    @Override
     public ArrayList<Integer> getTeamPlayers() { return teamPlayers; }
+    @Override
     public int getNextGW() { return nextGW; }
+    @Override
     public Map<Integer, Map<String, Object>> getPlayerData() { return playerData; }
+    @Override
     public List<Map<String, Object>> getNextGWInfo() { return nextGWInfo; }
+    @Override
     public ArrayList<Integer> getTransferHistory() { return transferHistory; }
+    @Override
     public Map<String, Object> getChips() { return chips; }
-    public Map<Integer, List<Map<String, Object>>> getRemainingFixtures() {return this.remainingFixtures; }
+    @Override
+    public Map<Integer, List<Map<String, Object>>> getRemainingFixtures() {return remainingFixtures; }
 
 }
