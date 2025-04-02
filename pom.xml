@@ -67,15 +67,7 @@
 			<version>0.0.8</version>
 			<configuration>
 				<options></options>
-				<mainClass>exampleproject.ExampleProjectApp</mainClass>
-				<!-- for jlink -->
-				<compress>2</compress>
-				<noHeaderFiles>true</noHeaderFiles>
-				<stripDebug>true</stripDebug>
-				<noManPages>true</noManPages>
-				<launcher>exampleproject</launcher>
-				<jlinkImageName>exampleproject</jlinkImageName>
-				<jlinkZipName>exampleproject</jlinkZipName>
+				<mainClass>FPLManager.FPLManagerApp</mainClass>
 			</configuration>
 	    </plugin>
 
