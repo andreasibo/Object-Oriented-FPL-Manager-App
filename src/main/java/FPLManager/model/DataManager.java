@@ -31,7 +31,7 @@ public class DataManager {
      */
     private ArrayList<ArrayList<String>> loadTeams() {
         ArrayList<ArrayList<String>> teams = new ArrayList<>();
-        try (InputStream inputStream = getClass().getResourceAsStream("/FPLManager/teams.csv");
+        try (InputStream inputStream = getClass().getResourceAsStream("/FPLManager/data/teams.csv");
         Scanner scanner = new Scanner(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
             if (inputStream == null) {
                 throw new IllegalStateException("Error: 'teams.csv' resource not found");
@@ -68,7 +68,7 @@ public class DataManager {
      */
     public void addUser(String teamName, int teamID) {
         Path currentPath = Paths.get(".");
-        Path filePath = currentPath.resolve("src/main/resources/FPLManager/").resolve("users.txt").normalize();
+        Path filePath = currentPath.resolve("src/main/resources/FPLManager/data").resolve("users.txt").normalize();
         try (PrintWriter writer = new PrintWriter(new FileWriter(filePath.toString(), true))) {
 
             writer.println(teamName + "," + teamID);
@@ -85,7 +85,7 @@ public class DataManager {
      * @return the ID of the team, or 0 if not found
      */
     public int findUser(String teamName) {
-        try (InputStream inputStream = getClass().getResourceAsStream("/FPLManager/users.txt");
+        try (InputStream inputStream = getClass().getResourceAsStream("/FPLManager/data/users.txt");
              Scanner scanner = new Scanner(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
 
             if (inputStream == null) {
