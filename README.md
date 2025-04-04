@@ -80,7 +80,7 @@ FPLManager/
 │   │   │   │   │   ├── class_diagram.png
 │   │   │   │   │   ├── class_diagram.puml
 │   │   │   │   │   └── Dokumentasjon.pdf
-│   │   │   │   └──  model/
+│   │   │   │   ├──  model/
 │   │   │   │   │   └── App.fxml
 │   ├── test/
 │   │   ├── java/
