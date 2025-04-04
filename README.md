@@ -73,11 +73,15 @@ FPLManager/
 │   │   │   │   │   └── ... (other model classes)
 │   │   ├── resources/
 │   │   │   ├── FPLManager/
-│   │   │   │   ├── model/
-│   │   │   │   │   ├── App.fxml
-│   │   │   │   ├── teams.csv
-│   │   │   │   ├── users.txt
-│   │   │   │   └── class_diagram.puml
+│   │   │   │   ├── data/
+│   │   │   │   │   ├── teams.csv
+│   │   │   │   │   └── users.txt
+│   │   │   │   ├── documentation/
+│   │   │   │   │   ├── class_diagram.png
+│   │   │   │   │   ├── class_diagram.puml
+│   │   │   │   │   └── Dokumentasjon.pdf
+│   │   │   │   └──  model/
+│   │   │   │   │   └── App.fxml
 │   ├── test/
 │   │   ├── java/
 │   │   │   ├── FPLManager/model/
