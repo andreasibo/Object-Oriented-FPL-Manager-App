@@ -25,7 +25,8 @@ public class PlayerTest {
             @Override
             public ArrayList<ArrayList<String>> getTeams() {
                 ArrayList<ArrayList<String>> teams = new ArrayList<>();
-                teams.add(new ArrayList<>(List.of("Test Team", "TT")));
+                teams.add(new ArrayList<>(List.of("Test Team", "TT" )));
+                teams.add(new ArrayList<>(List.of("Test Team", "TT" )));
                 return teams;
             }
         };
@@ -55,7 +56,7 @@ public class PlayerTest {
         fixturesGW38.add(fixture1);
         testFixtureData.put(38, fixturesGW38);
 
-        testPlayer = new Player(1, 37, testPlayerData, testFixtureData, testDataManager) {
+        testPlayer = new Defender(1, 37, testPlayerData, testFixtureData, testDataManager) {
         };
     }
 
