@@ -37,7 +37,7 @@ public class DataManagerTest {
         int teamId = 123;
         dataManager.addUser(teamName, teamId);
 
-        Path usersFilePath = Paths.get("src/main/resources/FPLManager/users.txt");
+        Path usersFilePath = Paths.get("src/main/resources/FPLManager/data/users.txt");
         try {
             String fileContent = new String(Files.readAllBytes(usersFilePath));
             assertTrue(fileContent.contains(teamName + "," + teamId));
