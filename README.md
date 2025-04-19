@@ -33,8 +33,8 @@ This is a JavaFX application designed to help Fantasy Premier League (FPL) manag
 1.  **Clone the repository:**
 
     ```bash
-    git clone [repository URL]
-    cd [repository directory]
+    git clone git@github.com:andreasibo/Object-Oriented-FPL-Manager-App.git
+    cd Object-Oriented-FPL-Manager-App
     ```
 
 2.  **Build the project using Maven:**
